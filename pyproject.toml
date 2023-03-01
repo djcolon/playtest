@@ -1,0 +1,2 @@
+[tool.ruff]
+select = ["E", "W", "I", "N", "D", "F", "PT", "B", "ANN", "SIM"]
