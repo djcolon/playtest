@@ -1,16 +1,16 @@
 """Demo test file for testing the framework."""
 
-from playwright.sync_api import Page, expect
+from playwright.sync_api import expect
+
+from pages.cart import CartPage
 from pages.login import LoginPage
 from pages.products import ProductsPage
-from pages.cart import CartPage
 
 
 def test_web(
     login_page: LoginPage, products_page: ProductsPage, cart_page: CartPage
 ) -> None:
     """Test function for testing the framework."""
-
     # Load the website
     login_page.load()
 
