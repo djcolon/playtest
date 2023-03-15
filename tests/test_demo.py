@@ -2,26 +2,20 @@
 
 from playwright.sync_api import expect
 
-from pages.cart import CartPage
-from pages.login import LoginPage
-from pages.products import ProductsPage
+from pages.bmi_page import BMIPage
 
 
-def test_web(
-    login_page: LoginPage, products_page: ProductsPage, cart_page: CartPage
-) -> None:
-    """Test function for testing the framework."""
-    # Load the website
-    login_page.load()
+def test_bmi_metric(bmi_page: BMIPage) -> None:
+    """Test function for testing the metric system calculations of the BMI calculator."""
+    # Load the webpage
+    bmi_page.load()
 
-    # Login to the website
-    login_page.login(username="standard_user", password="secret_sauce")
+    # Input the height and weight
+    bmi_page.select_metric_cm()
+    bmi_page.input_height_weight(height="180", weight="75")
 
-    # Add a product to the cart
-    products_page.add_backpack_to_cart()
+    # Click calculate
+    bmi_page.calculate_bmi()
 
-    # View the cart
-    products_page.view_cart()
-
-    # Assert the price is correct
-    expect(cart_page.item_price()).to_have_text("$29.99")
+    # Assert that the correct BMI is calculated and displayed
+    expect(bmi_page.bmi_result).to_have_text("23.15")
