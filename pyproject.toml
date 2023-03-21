@@ -1,2 +1,8 @@
 [tool.ruff]
 select = ["E", "W", "I", "N", "D", "F", "PT", "B", "ANN", "SIM"]
+
+[tool.pytest.ini_options]
+markers = [
+    "smoke: marks tests as smoke (deselect with '-m \"not smoke\"')",
+    "regression: marks tests as regression (deselect with '-m \"not regression\"')",
+]
