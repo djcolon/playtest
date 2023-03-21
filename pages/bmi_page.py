@@ -26,6 +26,10 @@ class BMIPage:
         self.page.goto(self.URL)
         self.cookies_agree_btn.click()
 
+    def select_metric(self: Self) -> None:
+        """Check the metric radio button."""
+        self.metric_radio_btn.check()
+
     def select_metric_cm(self: Self) -> None:
         """Check the metric radio button and select the centimetres option."""
         self.metric_radio_btn.check()
