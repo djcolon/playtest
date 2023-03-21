@@ -6,6 +6,7 @@ from playwright.sync_api import expect
 from pages.bmi_page import BMIPage
 
 
+@pytest.mark.smoke()
 @pytest.mark.parametrize(
     ("height", "weight", "bmi"),
     [("180", "75", "23.15"), ("182", "80", "24.15"), ("184", "85", "25.11")],
@@ -28,6 +29,7 @@ def test_bmi_metric_centimetres(
     expect(bmi_page.bmi_result).to_have_text(bmi)
 
 
+@pytest.mark.regression()
 @pytest.mark.parametrize(
     ("height", "weight", "bmi"),
     [("1.80", "75", "23.15"), ("1.82", "80", "24.15"), ("1.84", "85", "25.11")],
