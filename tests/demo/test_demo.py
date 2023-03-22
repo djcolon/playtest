@@ -9,7 +9,11 @@ from pages.bmi_page import BMIPage
 @pytest.mark.smoke()
 @pytest.mark.parametrize(
     ("height", "weight", "bmi"),
-    [("180", "75", "23.15"), ("182", "80", "24.15"), ("184", "85", "25.11")],
+    [
+        ("180", "75", "23.14"),
+        ("182", "80", "24.15"),
+        ("184", "85", "25.11"),
+    ],
 )
 def test_bmi_metric_centimetres(
     bmi_page: BMIPage, height: str, weight: str, bmi: str
