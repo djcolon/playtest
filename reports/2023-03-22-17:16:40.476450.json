@@ -1,0 +1,43 @@
+[
+  {
+    "nodeid": "tests/demo/test_demo.py::test_bmi_metric_centimetres[chromium-180-75-23.14]",
+    "when": "call",
+    "outcome": "failed",
+    "duration": 10.685923136989004,
+    "errors": {
+      "exception_type": "AssertionError",
+      "exception_message_formatted": "AssertionError: Locator expected to have text '23.14'\nActual value: 23.15 \nCall log:\nLocatorAssertions.to_have_text with timeout 5000ms\nwaiting for locator(\".bmi-result\")\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\nwaiting for locator(\".bmi-result\")\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"\n  locator resolved to <span class=\"bmi-result\">23.15</span>\n  unexpected value \"23.15\"",
+      "exception_traceback": "[<TracebackEntry /Users/lewisevans/dev/playtest/tests/demo/test_demo.py:33>]"
+    }
+  },
+  {
+    "nodeid": "tests/demo/test_demo.py::test_bmi_metric_metres[chromium-1.80-75-23.15]",
+    "when": "call",
+    "outcome": "passed",
+    "duration": 2.188539472001139
+  },
+  {
+    "nodeid": "tests/demo/test_demo.py::test_bmi_metric_centimetres[chromium-182-80-24.15]",
+    "when": "call",
+    "outcome": "passed",
+    "duration": 7.583078158000717
+  },
+  {
+    "nodeid": "tests/demo/test_demo.py::test_bmi_metric_metres[chromium-1.82-80-24.15]",
+    "when": "call",
+    "outcome": "passed",
+    "duration": 2.372745294997003
+  },
+  {
+    "nodeid": "tests/demo/test_demo.py::test_bmi_metric_centimetres[chromium-184-85-25.11]",
+    "when": "call",
+    "outcome": "passed",
+    "duration": 5.152103821004857
+  },
+  {
+    "nodeid": "tests/demo/test_demo.py::test_bmi_metric_metres[chromium-1.84-85-25.11]",
+    "when": "call",
+    "outcome": "passed",
+    "duration": 4.025948262991733
+  }
+]
