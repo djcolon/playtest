@@ -4,16 +4,12 @@ import pytest
 from playwright.sync_api import expect
 
 from pages.bmi_page import BMIPage
+from utils.load_data import load_csv_data
 
 
 @pytest.mark.smoke()
 @pytest.mark.parametrize(
-    ("height", "weight", "bmi"),
-    [
-        ("180", "75", "23.14"),
-        ("182", "80", "24.15"),
-        ("184", "85", "25.11"),
-    ],
+    ("height", "weight", "bmi"), load_csv_data(path="./data/bmi_data_metric_cm.csv")
 )
 def test_bmi_metric_centimetres(
     bmi_page: BMIPage, height: str, weight: str, bmi: str
