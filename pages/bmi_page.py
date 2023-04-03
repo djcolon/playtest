@@ -2,7 +2,7 @@
 
 from typing import Self
 
-from playwright.sync_api import Page
+from playwright.sync_api import Locator, Page
 
 
 class BMIPage:
@@ -11,15 +11,16 @@ class BMIPage:
     URL: str = "https://patient.info/doctor/bmi-calculator-calculator"
 
     def __init__(self: Self, page: Page) -> None:
-        self.page = page
-        self.cookies_agree_btn = page.get_by_role("button", name="AGREE")
-        self.metric_radio_btn = page.get_by_role("radio", name="Metric")
-        self.height_options = page.get_by_role("combobox")
-        self.height_option_cm = "centimetres"
-        self.height_input = page.get_by_role("textbox", name="Height")
-        self.weight_input = page.get_by_role("textbox", name="Weight")
-        self.calculate_btn = page.get_by_role("button", name="Calculate")
-        self.bmi_result = page.locator(".bmi-result")
+        """Initialise the page object and it's defined locators."""
+        self.page: Page = page
+        self.cookies_agree_btn: Locator = page.get_by_role("button", name="AGREE")
+        self.metric_radio_btn: Locator = page.get_by_role("radio", name="Metric")
+        self.height_options: Locator = page.get_by_role("combobox")
+        self.height_option_cm: Locator = "centimetres"
+        self.height_input: Locator = page.get_by_role("textbox", name="Height")
+        self.weight_input: Locator = page.get_by_role("textbox", name="Weight")
+        self.calculate_btn: Locator = page.get_by_role("button", name="Calculate")
+        self.bmi_result: Locator = page.locator(".bmi-result")
 
     def load(self: Self) -> None:
         """Load the website."""
