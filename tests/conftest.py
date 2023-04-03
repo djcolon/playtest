@@ -1,8 +1,7 @@
 """File for defining pytest fixtures."""
 
-import datetime
 import json
-import time
+from datetime import datetime
 from pathlib import Path
 from typing import Self
 
@@ -39,14 +38,6 @@ def pytest_configure(config: pytest.Config) -> None:
         config.pluginmanager.register(config._playtest_report_plugin)
 
 
-def pytest_unconfigure(config: pytest.Config):
-    reporter: TerminalReporter = config.pluginmanager.get_plugin("terminalreporter")
-    duration = time.time() - reporter._sessionstarttime
-    reporter.write_sep(
-        "=", "duration: {} seconds".format(duration), yellow=True, bold=True
-    )
-
-
 class PlaytestReportPlugin:
     """Class containing logic for using pytest hooks to create a json report file."""
 
@@ -54,7 +45,7 @@ class PlaytestReportPlugin:
         """Initialise the object with a unique report file path."""
         self._config = config
         self._report_path = Path(
-            f"./reports/{str(datetime.datetime.now()).replace(' ', '-')}.json"
+            f"./reports/{str(datetime.now().replace(microsecond=0)).replace(' ', '-')}.json"
         )
         self._metadata: list = []
         self._collect_data: list = []
