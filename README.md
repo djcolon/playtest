@@ -35,3 +35,13 @@ Run tests in parallel with `pytest-xdist`
 ```bash
 python -m pytest --numprocesses auto
 ```
+
+## Config
+Example of `config.yaml` file usage
+```yaml
+verbose: True
+playtest-report: False
+marks:
+  - smoke
+  - regression
+```
