@@ -67,7 +67,8 @@ class PlaytestReportPlugin:
         )
 
         # Remove the "node" item as it is not json encodable
-        data.pop("node")
+        if "node" in data:
+            data.pop("node")
 
         self._test_data.append(data)
 
@@ -96,5 +97,5 @@ class PlaytestReportPlugin:
     def pytest_terminal_summary(self: Self, terminalreporter: TerminalReporter) -> None:
         """Write details of the test report to the terminal."""
         terminalreporter.write_sep(
-            "-", f"generated report log file: {self._report_path}"
+            "-", f"generated Playtest report file: {self._report_path}"
         )
