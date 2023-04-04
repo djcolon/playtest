@@ -9,3 +9,29 @@ Playtest is a test automation solution for web testing using Playwright and Pyte
 - Informative reporting
 - Easy configuration
 
+
+## Usage
+Run all tests
+```bash
+python -m pytest
+```
+
+Run tests with a given mark e.g. smoke
+```bash
+python -m pytest -m smoke
+```
+
+Run with verbose terminal output
+```bash
+python -m pytest -v
+```
+
+Run with the playtest report plugin to generate a json report
+```bash
+python -m pytest --playtest-report
+```
+
+Run tests in parallel with `pytest-xdist`
+```bash
+python -m pytest --numprocesses auto
+```
