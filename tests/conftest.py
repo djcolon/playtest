@@ -1,5 +1,6 @@
 """File for defining pytest fixtures."""
 
+
 import json
 from datetime import datetime
 from pathlib import Path
@@ -64,6 +65,10 @@ class PlaytestReportPlugin:
         data = self._config.hook.pytest_report_to_serializable(
             config=self._config, report=report
         )
+
+        # Remove the "node" item as it is not json encodable
+        data.pop("node")
+
         self._test_data.append(data)
 
     def pytest_sessionfinish(self: Self, exitstatus: int) -> None:
