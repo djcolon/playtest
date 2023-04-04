@@ -45,7 +45,7 @@ class PlaytestReportPlugin:
         """Initialise the object with a unique report file path."""
         self._config = config
         self._report_path = Path(
-            f"./reports/{str(datetime.now().replace(microsecond=0)).replace(' ', '-')}.json"
+            f"./reports/{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.json"
         )
         self._metadata: list = []
         self._collect_data: list = []
