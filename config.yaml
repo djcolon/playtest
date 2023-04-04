@@ -1,0 +1,11 @@
+# Example config
+# verbose: True
+# playtest-report: False
+# marks:
+#   - smoke
+#   - regression
+
+# CLI arguments
+verbose: False # True or False
+playtest-report: False # True or False
+marks: null # null or list of markers
