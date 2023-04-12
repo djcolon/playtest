@@ -1,4 +1,4 @@
 # CLI arguments
-verbose: False # True or False
+verbose: True # True or False
 playtest-report: False # True or False
 marks: null # null or list of markers
