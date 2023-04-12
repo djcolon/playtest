@@ -4,7 +4,6 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Self
 
 import pytest
 from _pytest.terminal import TerminalReporter
@@ -42,7 +41,7 @@ def pytest_configure(config: pytest.Config) -> None:
 class PlaytestReportPlugin:
     """Class containing logic for using pytest hooks to create a json report file."""
 
-    def __init__(self: Self, config: pytest.Config) -> None:
+    def __init__(self, config: pytest.Config) -> None:
         """Initialise the object with a unique report file path."""
         self._config = config
         self._report_path = Path(
@@ -53,14 +52,14 @@ class PlaytestReportPlugin:
         self._test_data: list = []
         self._total_duration: float = 0
 
-    def pytest_collectreport(self: Self, report: pytest.CollectReport) -> None:
+    def pytest_collectreport(self, report: pytest.CollectReport) -> None:
         """Get details of the tests that have been collected."""
         data = self._config.hook.pytest_report_to_serializable(
             config=self._config, report=report
         )
         self._collect_data.append(data)
 
-    def pytest_runtest_logreport(self: Self, report: pytest.TestReport) -> None:
+    def pytest_runtest_logreport(self, report: pytest.TestReport) -> None:
         """Get details of the tests that have been run."""
         data = self._config.hook.pytest_report_to_serializable(
             config=self._config, report=report
@@ -72,7 +71,7 @@ class PlaytestReportPlugin:
 
         self._test_data.append(data)
 
-    def pytest_sessionfinish(self: Self, exitstatus: int) -> None:
+    def pytest_sessionfinish(self, exitstatus: int) -> None:
         """Generate report at the end of the pytest session."""
         # Get the metadata for the report
         data = {"pytest_version": pytest.__version__, "exitstatus": exitstatus}
@@ -94,7 +93,7 @@ class PlaytestReportPlugin:
         with open(self._report_path, "x") as f:
             json.dump(json_data, f)
 
-    def pytest_terminal_summary(self: Self, terminalreporter: TerminalReporter) -> None:
+    def pytest_terminal_summary(self, terminalreporter: TerminalReporter) -> None:
         """Write details of the test report to the terminal."""
         terminalreporter.write_sep(
             "-", f"generated Playtest report file: {self._report_path}"
