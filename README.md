@@ -11,6 +11,7 @@ Playtest is a test automation solution for web testing using Playwright and Pyte
 
 
 ## Usage
+
 Run all tests
 ```bash
 python -m pytest
@@ -35,6 +36,19 @@ Run tests in parallel with `pytest-xdist`
 ```bash
 python -m pytest --numprocesses auto
 ```
+
+## Docker usage
+
+Start container
+```bash
+docker-compose up --build
+```
+
+Run the container
+```bash
+docker start playtest -a
+```
+
 
 ## Config
 Example of `config.yaml` file usage
