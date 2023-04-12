@@ -15,4 +15,8 @@ def generate_cli_args(config: dict) -> list:
     if config["playtest-report"]:
         cli_args.append("--playtest-report")
 
+    if config["parallel"]:
+        cli_args.append("--numprocesses")
+        cli_args.append("auto")
+
     return cli_args
