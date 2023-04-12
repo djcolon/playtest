@@ -54,6 +54,7 @@ docker start playtest -a
 Example of `config.yaml` file usage
 ```yaml
 verbose: True
+parallel: False
 playtest-report: False
 marks:
   - smoke
