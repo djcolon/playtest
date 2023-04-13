@@ -1,5 +1,7 @@
 # CLI arguments
 verbose: True # True or False
-parallel: True # True or False
+parallel: False # True or False
 playtest-report: False # True or False
 marks: null # null or list of markers
+test_dir: null # null or directory path e.g. tests/demo
+test_file: null # null or file path e.g. tests/demo/test_demo.py
