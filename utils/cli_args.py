@@ -25,4 +25,8 @@ def generate_cli_args(config: dict) -> list:
         cli_args.append("--numprocesses")
         cli_args.append("auto")
 
+    if config["rerun"] > 0:
+        cli_args.append("--reruns")
+        cli_args.append(str(config["rerun"]))
+
     return cli_args
