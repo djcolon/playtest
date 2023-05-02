@@ -24,9 +24,10 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     """Add a command line option."""
     parser.addoption(
         "--playtest-report",
-        action="store_true",
+        action="store",
+        metavar="path",
         default=None,
-        help="Generate a json test report.",
+        help="Path to json report of test session events.",
     )
 
 
@@ -34,23 +35,26 @@ def pytest_configure(config: pytest.Config) -> None:
     """Configure the playtest-report plugin."""
     playtest_report = config.option.playtest_report
     if playtest_report and not hasattr(config, "workerinput"):
-        config._playtest_report_plugin = PlaytestReportPlugin(config)
+        config._playtest_report_plugin = PlaytestReportPlugin(
+            config, Path(playtest_report)
+        )
         config.pluginmanager.register(config._playtest_report_plugin)
 
 
 class PlaytestReportPlugin:
     """Class containing logic for using pytest hooks to create a json report file."""
 
-    def __init__(self, config: pytest.Config) -> None:
+    def __init__(self, config: pytest.Config, report_path: Path) -> None:
         """Initialise the object with a unique report file path."""
         self._config = config
-        self._report_path = Path(
-            f"./reports/{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.json"
-        )
+        self._report_path = report_path / "playtest_report.json"
         self._metadata: list = []
         self._collect_data: list = []
         self._test_data: list = []
         self._total_duration: float = 0
+
+        # Create the report path directory if it does not already exist
+        report_path.mkdir(parents=True, exist_ok=True)
 
     def pytest_collectreport(self, report: pytest.CollectReport) -> None:
         """Get details of the tests that have been collected."""
