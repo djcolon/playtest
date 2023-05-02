@@ -1,7 +1,7 @@
 """Functions to produce the cli arguments for pytest."""
 
 
-def generate_cli_args(config: dict) -> list:
+def generate_cli_args(config: dict, path: str) -> list:
     """Return a list of string arguments for the pytest.main() call."""
     cli_args = []
 
@@ -20,6 +20,7 @@ def generate_cli_args(config: dict) -> list:
 
     if config["playtest-report"]:
         cli_args.append("--playtest-report")
+        cli_args.append(path)
 
     if config["parallel"]:
         cli_args.append("--numprocesses")
@@ -28,5 +29,12 @@ def generate_cli_args(config: dict) -> list:
     if config["rerun"] > 0:
         cli_args.append("--reruns")
         cli_args.append(str(config["rerun"]))
+
+    if config["tracing"]:
+        cli_args.append("--tracing")
+        cli_args.append("on")
+
+    cli_args.append("--output")
+    cli_args.append(path)
 
     return cli_args
