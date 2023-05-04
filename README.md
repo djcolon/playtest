@@ -49,6 +49,12 @@ Run the container
 docker start playtest -a
 ```
 
+## Streamlit usage
+
+Run streamlit app for an interactive web ui
+```bash
+streamlit run ./web/app.py
+```
 
 ## Config
 Example of `config.yaml` file usage
