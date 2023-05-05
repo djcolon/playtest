@@ -5,9 +5,27 @@ import subprocess
 import streamlit as st
 
 
-def run() -> int:
+def run_config():
+    """Generate Playtest config to pass to the run command."""
+    config = {
+        "verbose": True,
+        "parallel": False,
+        "playtest-report": True,
+        "marks": None,
+        "test_dir": None,
+        "test_file": None,
+        "rerun": 0,
+        "tracing": False,
+    }
+    return config
+
+
+def run(cli_args: list) -> int:
     """Entry point for running pytest from Streamlit."""
-    args = ["python", "-m", "pytest", "-v"]
+    args = ["python", "-m", "pytest", "tests"]
+    args.extend(cli_args)
+
+    st.write(args)
 
     # Create expanders to contain different pytest output
     expander_metadata = st.expander("Test Run Metadata")
