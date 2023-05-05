@@ -5,7 +5,7 @@ import subprocess
 import streamlit as st
 
 
-def run_config():
+def run_config() -> dict:
     """Generate Playtest config to pass to the run command."""
     config = {
         "verbose": True,
