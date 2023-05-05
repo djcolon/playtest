@@ -21,9 +21,12 @@ def markers() -> list[str | None]:
     return markers
 
 
-def run_config(playtest_report: bool, markers: list, tracing: bool) -> dict:
+def run_config(
+    headed: bool, playtest_report: bool, markers: list, tracing: bool
+) -> dict:
     """Generate Playtest config to pass to the run command."""
     config = {
+        "headed": headed,
         "verbose": True,
         "parallel": False,
         "playtest-report": playtest_report,

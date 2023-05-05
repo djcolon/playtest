@@ -1,4 +1,5 @@
 # CLI arguments
+headed: False # True or False
 verbose: True # True or False
 parallel: False # True or False
 playtest-report: True # True or False

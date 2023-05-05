@@ -34,6 +34,11 @@ if __name__ == "__main__":
             help="Generate a playwright trace for each test. See https://playwright.dev/python/docs/trace-viewer-intro",
         )
 
+        # Option to select headed view
+        headed = st.checkbox(
+            label="Headed", help="Select to show browser when running tests"
+        )
+
         # Select pytest markers
         markers = markers()
 
@@ -43,7 +48,10 @@ if __name__ == "__main__":
 
     if run_btn:
         config = run_config(
-            playtest_report=playtest_report, markers=markers, tracing=tracing
+            headed=headed,
+            playtest_report=playtest_report,
+            markers=markers,
+            tracing=tracing,
         )
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 

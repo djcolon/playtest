@@ -5,6 +5,9 @@ def generate_cli_args(config: dict, path: str) -> list:
     """Return a list of string arguments for the pytest.main() call."""
     cli_args = []
 
+    if config["headed"]:
+        cli_args.append("--headed")
+
     if config["verbose"]:
         cli_args.append("-v")
 
