@@ -24,6 +24,9 @@ if __name__ == "__main__":
         # Option to select if report is generated
         playtest_report = st.checkbox(label="Generate report", value=True)
 
+        # Option to select if a Playwright trace is generated
+        tracing = st.checkbox(label="Tracing")
+
         # Select pytest markers
         markers = markers()
 
@@ -32,7 +35,7 @@ if __name__ == "__main__":
         run_btn = st.button(label="Run", type="primary")
 
     if run_btn:
-        config = run_config(playtest_report=playtest_report, markers=markers)
+        config = run_config(playtest_report=playtest_report, markers=markers, tracing=tracing)
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 
         path = Path.cwd() / "reports" / now

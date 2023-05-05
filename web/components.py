@@ -17,7 +17,7 @@ def markers() -> list[str | None]:
     return markers
 
 
-def run_config(playtest_report: bool, markers: list) -> dict:
+def run_config(playtest_report: bool, markers: list, tracing: bool) -> dict:
     """Generate Playtest config to pass to the run command."""
     config = {
         "verbose": True,
@@ -27,7 +27,7 @@ def run_config(playtest_report: bool, markers: list) -> dict:
         "test_dir": None,
         "test_file": None,
         "rerun": 0,
-        "tracing": False,
+        "tracing": tracing,
     }
     return config
 
