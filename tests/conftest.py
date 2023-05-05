@@ -34,26 +34,21 @@ def pytest_configure(config: pytest.Config) -> None:
     """Configure the playtest-report plugin."""
     playtest_report = config.option.playtest_report
     if playtest_report and not hasattr(config, "workerinput"):
-        config._playtest_report_plugin = PlaytestReportPlugin(
-            config, Path(playtest_report)
-        )
+        config._playtest_report_plugin = PlaytestReportPlugin(config, playtest_report)
         config.pluginmanager.register(config._playtest_report_plugin)
 
 
 class PlaytestReportPlugin:
     """Class containing logic for using pytest hooks to create a json report file."""
 
-    def __init__(self, config: pytest.Config, report_path: Path) -> None:
+    def __init__(self, config: pytest.Config, report_path: str) -> None:
         """Initialise the object with a unique report file path."""
         self._config = config
-        self._report_path = report_path / "playtest_report.json"
+        self._report_path = report_path
         self._metadata: list = []
         self._collect_data: list = []
         self._test_data: list = []
         self._total_duration: float = 0
-
-        # Create the report path directory if it does not already exist
-        report_path.mkdir(parents=True, exist_ok=True)
 
     def pytest_collectreport(self, report: pytest.CollectReport) -> None:
         """Get details of the tests that have been collected."""
@@ -92,8 +87,11 @@ class PlaytestReportPlugin:
             "test_data": self._test_data,
         }
 
+        # Define the path to the json report file
+        file_path = self._report_path + "/playtest_report.json"
+
         # Dump the dictionary as json to the json file
-        with open(self._report_path, "x") as f:
+        with open(file_path, "w") as f:
             json.dump(json_data, f)
 
     def pytest_terminal_summary(self, terminalreporter: TerminalReporter) -> None:
