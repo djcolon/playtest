@@ -14,7 +14,7 @@ def generate_cli_args(config: dict, path: str) -> list:
     if config["test_file"] is not None:
         cli_args.append(config["test_file"])
 
-    if config["marks"] is not None:
+    if config["marks"]:
         cli_args.append("-m")
         cli_args.append(" or ".join([str(m) for m in config["marks"]]))
 
