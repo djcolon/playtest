@@ -7,7 +7,7 @@ from pathlib import Path
 import streamlit as st
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from components import run, run_config
+from components import markers, run, run_config
 
 from utils.cli_args import generate_cli_args
 from utils.load_markers import load_pytest_markers
@@ -17,14 +17,11 @@ if __name__ == "__main__":
     st.title("Playtest")
 
     with st.sidebar:
-        # Parse markers from the pyproject.toml file
-        markers = load_pytest_markers()
-        # Display multi select widget with list of markers
-        st.multiselect(label="Markers", options=markers)
+        markers = markers()
         run_btn = st.button(label="Run", type="primary")
 
     if run_btn:
-        config = run_config()
+        config = run_config(markers=markers)
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 
         path = Path.cwd() / "reports" / now
