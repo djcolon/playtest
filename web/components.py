@@ -4,14 +4,26 @@ import subprocess
 
 import streamlit as st
 
+from utils.load_markers import load_pytest_markers
 
-def run_config() -> dict:
+
+def markers() -> list[str | None]:
+    """Load pytest marks, display them in streamlit and return the selected markers."""
+    # Parse markers from the pyproject.toml file
+    all_marks = load_pytest_markers()
+    # Display multi select widget with list of markers
+    markers = st.multiselect(label="Markers", options=all_marks)
+    # Return the chosen markers
+    return markers
+
+
+def run_config(markers: list) -> dict:
     """Generate Playtest config to pass to the run command."""
     config = {
         "verbose": True,
         "parallel": False,
         "playtest-report": True,
-        "marks": None,
+        "marks": markers,
         "test_dir": None,
         "test_file": None,
         "rerun": 0,
