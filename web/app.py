@@ -10,12 +10,17 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from components import run, run_config
 
 from utils.cli_args import generate_cli_args
+from utils.load_markers import load_pytest_markers
 
 if __name__ == "__main__":
     st.set_page_config(page_title="Playtest", page_icon="random")
     st.title("Playtest")
 
     with st.sidebar:
+        # Parse markers from the pyproject.toml file
+        markers = load_pytest_markers()
+        # Display multi select widget with list of markers
+        st.multiselect(label="Markers", options=markers)
         run_btn = st.button(label="Run", type="primary")
 
     if run_btn:
