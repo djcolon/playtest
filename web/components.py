@@ -5,7 +5,7 @@ from enum import StrEnum
 
 import streamlit as st
 
-from utils.list_paths import list_test_folders
+from utils.list_paths import list_test_files, list_test_folders
 from utils.load_markers import load_pytest_markers
 
 
@@ -26,25 +26,25 @@ def run_type() -> dict:
         options=[r.value for r in RunType],
     )
 
-    marks = []
-    test_folder = None
-    # test_file = None
-    # test = None
-
     if run_option == RunType.Markers:
         marks = markers()
+        options = {"marks": marks, "test_folder": None, "test_file": None}
 
-    if run_option == RunType.Folder:
+    elif run_option == RunType.Folder:
         test_folder = str(
             st.selectbox(label="Test folder", options=list_test_folders())
         )
+        options = {"marks": None, "test_folder": test_folder, "test_file": None}
 
-    # elif run_option == RunType.File:
-    # test_folder = st.selectbox(label="test folders", options=list_test_folders())
-    # test_file = st.selectbox(
-    # label="test file", options=list_test_files(test_folder)
-    # )
+    elif run_option == RunType.File:
+        test_folder = st.selectbox(label="test folders", options=list_test_folders())
+        test_file = str(
+            st.selectbox(label="test file", options=list_test_files(test_folder))
+        )
+        options = {"marks": None, "test_folder": None, "test_file": test_file}
 
+    else:
+        options = {"marks": None, "test_folder": None, "test_file": None}
     # elif run_option == RunType.TestCase:
     # test_folder = st.selectbox(label="test folders", options=list_test_folders())
     # test_file = st.selectbox(
@@ -52,12 +52,7 @@ def run_type() -> dict:
     # )
     # test = st.selectbox(label="test case", options=list_test_cases(test_file))
 
-    return {
-        "marks": marks,
-        "test_folder": test_folder,
-        # "test_file": test_file,
-        # "test": test,
-    }
+    return options
 
 
 def markers() -> list[str | None]:
@@ -80,6 +75,7 @@ def run_config(
     playtest_report: bool,
     markers: list,
     test_dir: str = None,
+    test_file: str = None,
     tracing: bool = False,
 ) -> dict:
     """Generate Playtest config to pass to the run command."""
@@ -90,7 +86,7 @@ def run_config(
         "playtest-report": playtest_report,
         "marks": markers,
         "test_dir": test_dir,
-        "test_file": None,
+        "test_file": test_file,
         "rerun": 0,
         "tracing": tracing,
     }

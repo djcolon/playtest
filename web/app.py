@@ -58,6 +58,7 @@ if __name__ == "__main__":
             playtest_report=playtest_report,
             markers=run_options.get("marks"),
             test_dir=run_options["test_folder"],
+            test_file=run_options["test_file"],
             tracing=tracing,
         )
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
