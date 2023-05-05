@@ -10,18 +10,29 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from components import markers, run, run_config
 
 from utils.cli_args import generate_cli_args
-from utils.load_markers import load_pytest_markers
 
 if __name__ == "__main__":
-    st.set_page_config(page_title="Playtest", page_icon="random")
+    st.set_page_config(
+        page_title="Playtest",
+        page_icon="random",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
     st.title("Playtest")
 
     with st.sidebar:
+        # Option to select if report is generated
+        playtest_report = st.checkbox(label="Generate report", value=True)
+
+        # Select pytest markers
         markers = markers()
+
+        st.divider()
+
         run_btn = st.button(label="Run", type="primary")
 
     if run_btn:
-        config = run_config(markers=markers)
+        config = run_config(playtest_report=playtest_report, markers=markers)
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 
         path = Path.cwd() / "reports" / now
