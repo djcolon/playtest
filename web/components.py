@@ -12,7 +12,11 @@ def markers() -> list[str | None]:
     # Parse markers from the pyproject.toml file
     all_marks = load_pytest_markers()
     # Display multi select widget with list of markers
-    markers = st.multiselect(label="Markers", options=all_marks)
+    markers = st.multiselect(
+        label="Markers",
+        options=all_marks,
+        help="Select to run tests with the chosen markers",
+    )
     # Return the chosen markers
     return markers
 

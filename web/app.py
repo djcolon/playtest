@@ -7,9 +7,9 @@ from pathlib import Path
 import streamlit as st
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from components import markers, run, run_config
+from components import markers, run, run_config  # noqa: E402
 
-from utils.cli_args import generate_cli_args
+from utils.cli_args import generate_cli_args  # noqa: E402
 
 if __name__ == "__main__":
     st.set_page_config(
@@ -22,10 +22,17 @@ if __name__ == "__main__":
 
     with st.sidebar:
         # Option to select if report is generated
-        playtest_report = st.checkbox(label="Generate report", value=True)
+        playtest_report = st.checkbox(
+            label="Generate report",
+            value=True,
+            help="Generate a json report for the test session",
+        )
 
         # Option to select if a Playwright trace is generated
-        tracing = st.checkbox(label="Tracing")
+        tracing = st.checkbox(
+            label="Tracing",
+            help="Generate a playwright trace for each test. See https://playwright.dev/python/docs/trace-viewer-intro",
+        )
 
         # Select pytest markers
         markers = markers()
@@ -35,7 +42,9 @@ if __name__ == "__main__":
         run_btn = st.button(label="Run", type="primary")
 
     if run_btn:
-        config = run_config(playtest_report=playtest_report, markers=markers, tracing=tracing)
+        config = run_config(
+            playtest_report=playtest_report, markers=markers, tracing=tracing
+        )
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 
         path = Path.cwd() / "reports" / now
