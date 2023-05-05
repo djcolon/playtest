@@ -33,8 +33,7 @@ def generate_cli_args(config: dict, path: str) -> list:
     if config["tracing"]:
         cli_args.append("--tracing")
         cli_args.append("on")
-
-    cli_args.append("--output")
-    cli_args.append(path)
+        cli_args.append("--output")
+        cli_args.append(path)
 
     return cli_args
