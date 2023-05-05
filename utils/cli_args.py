@@ -13,11 +13,10 @@ def generate_cli_args(config: dict, path: str) -> list:
 
     if config["test_dir"] is not None:
         cli_args.append(config["test_dir"])
+    elif config["test_file"] is not None:
+        cli_args.append(config["test_file"])
     else:
         cli_args.append("tests")
-
-    if config["test_file"] is not None:
-        cli_args.append(config["test_file"])
 
     if config["marks"]:
         cli_args.append("-m")
