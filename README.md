@@ -53,7 +53,7 @@ docker start playtest -a
 
 Run streamlit app for an interactive web ui
 ```bash
-streamlit run ./web/app.py
+streamlit run web/app.py
 ```
 
 ## Config
