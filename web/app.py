@@ -7,7 +7,7 @@ from pathlib import Path
 import streamlit as st
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from components import markers, run, run_config  # noqa: E402
+from components import run, run_config, run_type  # noqa: E402
 
 from utils.cli_args import generate_cli_args  # noqa: E402
 
@@ -42,8 +42,10 @@ if __name__ == "__main__":
         # Run tests in parallel
         parallel = st.checkbox(label="Parallel", help="Select to run tests in parallel")
 
-        # Select pytest markers
-        markers = markers()
+        st.divider()
+
+        # Select type of test run and associated options
+        run_options = run_type()
 
         st.divider()
 
@@ -54,7 +56,8 @@ if __name__ == "__main__":
             parallel=parallel,
             headed=headed,
             playtest_report=playtest_report,
-            markers=markers,
+            markers=run_options.get("marks"),
+            test_dir=run_options["test_folder"],
             tracing=tracing,
         )
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
