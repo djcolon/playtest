@@ -22,13 +22,13 @@ def markers() -> list[str | None]:
 
 
 def run_config(
-    headed: bool, playtest_report: bool, markers: list, tracing: bool
+    headed: bool, parallel: bool, playtest_report: bool, markers: list, tracing: bool
 ) -> dict:
     """Generate Playtest config to pass to the run command."""
     config = {
         "headed": headed,
         "verbose": True,
-        "parallel": False,
+        "parallel": parallel,
         "playtest-report": playtest_report,
         "marks": markers,
         "test_dir": None,
@@ -73,9 +73,15 @@ def run(cli_args: list) -> int:
                 ):
                     with expander_metadata:
                         st.write(output)
-                elif output.startswith("tests") and "PASSED" in output:
+                elif (
+                    output.startswith("tests")
+                    and "PASSED" in output
+                    or output.startswith("[g")
+                    and "PASSED" in output
+                ):
                     with expander_results:
                         st.success(output)
+
                 elif output.startswith("tests") and "FAILED" in output:
                     with expander_results:
                         st.error(output)

@@ -39,6 +39,9 @@ if __name__ == "__main__":
             label="Headed", help="Select to show browser when running tests"
         )
 
+        # Run tests in parallel
+        parallel = st.checkbox(label="Parallel", help="Select to run tests in parallel")
+
         # Select pytest markers
         markers = markers()
 
@@ -48,6 +51,7 @@ if __name__ == "__main__":
 
     if run_btn:
         config = run_config(
+            parallel=parallel,
             headed=headed,
             playtest_report=playtest_report,
             markers=markers,
