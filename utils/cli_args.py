@@ -15,6 +15,8 @@ def generate_cli_args(config: dict, path: str) -> list:
         cli_args.append(config["test_dir"])
     elif config["test_file"] is not None:
         cli_args.append(config["test_file"])
+    elif config["test_case"] is not None:
+        cli_args.append(config["test_case"])
     else:
         cli_args.append("tests")
 

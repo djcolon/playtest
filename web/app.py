@@ -18,6 +18,7 @@ if __name__ == "__main__":
         layout="wide",
         initial_sidebar_state="expanded",
     )
+
     st.title("Playtest")
 
     with st.sidebar:
@@ -36,7 +37,8 @@ if __name__ == "__main__":
 
         # Option to select headed view
         headed = st.checkbox(
-            label="Headed", help="Select to show browser when running tests"
+            label="Headed",
+            help="Select to show browser when running tests",
         )
 
         # Run tests in parallel
@@ -59,13 +61,17 @@ if __name__ == "__main__":
             markers=run_options.get("marks"),
             test_dir=run_options["test_folder"],
             test_file=run_options["test_file"],
+            test_case=run_options["test_case"],
             tracing=tracing,
         )
+
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 
         path = Path.cwd() / "reports" / now
 
-        path.mkdir()
+        # Create the report subdirectory only if either option is selected
+        if playtest_report or tracing:
+            path.mkdir()
 
         cli_args = generate_cli_args(config=config, path=str(path))
 
