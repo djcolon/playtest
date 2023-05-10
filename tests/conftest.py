@@ -2,20 +2,11 @@
 
 
 import json
-from pathlib import Path
 
 import pytest
 from _pytest.terminal import TerminalReporter
-from playwright.sync_api import Page
 
-from pages.bmi_page import BMIPage
-
-
-# Page fixtures
-@pytest.fixture()
-def bmi_page(page: Page) -> BMIPage:
-    """Pytest fixture to create instance of the BMIPage class."""
-    return BMIPage(page)
+pytest_plugins = ["fixtures.page_fixtures"]
 
 
 # Hooks
