@@ -2,9 +2,10 @@
 headed: False # True or False
 verbose: True # True or False
 parallel: False # True or False
-playtest-report: True # True or False
+playtest-report: False # True or False
 marks: null # null or list of markers
 test_dir: null # null or directory path e.g. tests/demo
 test_file: null # null or file path e.g. tests/demo/test_demo.py
+test_case: null # null or test case name e.g. test/demo/test_demo::test_abc
 rerun: 1 # number of times to rerun failed tests
-tracing: True # True or False
+tracing: False # True or False
