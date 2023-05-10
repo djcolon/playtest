@@ -1,6 +1,7 @@
 """Class for implementing a json report plugin for Playtest."""
 
 import json
+from pathlib import Path
 
 import pytest
 from _pytest.terminal import TerminalReporter
@@ -37,6 +38,9 @@ class PlaytestReportPlugin:
         self._collect_data: list = []
         self._test_data: list = []
         self._total_duration: float = 0
+
+        # Create the report path directory if it does not already exist
+        Path(self._report_path).mkdir(parents=True, exist_ok=True)
 
     def pytest_collectreport(self, report: pytest.CollectReport) -> None:
         """Get details of the tests that have been collected."""
