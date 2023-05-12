@@ -11,6 +11,12 @@ from components import run, run_config, run_type  # noqa: E402
 
 from utils.cli_args import generate_cli_args  # noqa: E402
 
+
+def btn_callbk() -> None:
+    """Change state from streamlit buttons."""
+    st.session_state.disabled = not st.session_state.disabled
+
+
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Playtest",
@@ -21,39 +27,61 @@ if __name__ == "__main__":
 
     st.title("Playtest")
 
+    if "disabled" not in st.session_state:
+        st.session_state.disabled = False
+
     with st.sidebar:
         # Option to select if report is generated
         playtest_report = st.checkbox(
             label="Generate report",
             value=True,
             help="Generate a json report for the test session",
+            disabled=st.session_state.disabled,
         )
 
         # Option to select if a Playwright trace is generated
         tracing = st.checkbox(
             label="Tracing",
             help="Generate a playwright trace for each test. See https://playwright.dev/python/docs/trace-viewer-intro",
+            disabled=st.session_state.disabled,
         )
 
         # Option to select headed view
         headed = st.checkbox(
             label="Headed",
             help="Select to show browser when running tests",
+            disabled=st.session_state.disabled,
         )
 
         # Run tests in parallel
-        parallel = st.checkbox(label="Parallel", help="Select to run tests in parallel")
+        parallel = st.checkbox(
+            label="Parallel",
+            help="Select to run tests in parallel",
+            disabled=st.session_state.disabled,
+        )
 
         st.divider()
 
         # Select type of test run and associated options
-        run_options = run_type()
+        run_options = run_type(session_state=st.session_state)
 
         st.divider()
 
-        run_btn = st.button(label="Run", type="primary")
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            run_btn = st.button(
+                label="Run",
+                on_click=btn_callbk,
+                type="primary",
+                key="run",
+                disabled=st.session_state.disabled,
+            )
 
     if run_btn:
+        with st.sidebar, col2:
+            if st.button(label="Reset", on_click=btn_callbk, type="primary"):
+                st.session_state.disabled = False
+
         config = run_config(
             parallel=parallel,
             headed=headed,

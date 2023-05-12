@@ -4,6 +4,7 @@ import subprocess
 from enum import StrEnum
 
 import streamlit as st
+from streamlit.runtime.state import SessionStateProxy
 
 from utils.list_paths import list_test_cases, list_test_files, list_test_folders
 from utils.load_markers import load_pytest_markers
@@ -19,11 +20,12 @@ class RunType(StrEnum):
     Markers = "By marks"
 
 
-def run_type() -> dict:
+def run_type(session_state: SessionStateProxy) -> dict:
     """Display streamlit component for selecting a run type and set relevant values."""
     run_option = st.radio(
         label="Run type",
         options=[r.value for r in RunType],
+        disabled=session_state.disabled,
     )
 
     if run_option == RunType.Markers:
@@ -36,7 +38,11 @@ def run_type() -> dict:
         }
 
     elif run_option == RunType.Folder:
-        test_folder = st.selectbox(label="Test folder", options=list_test_folders())
+        test_folder = st.selectbox(
+            label="Test folder",
+            options=list_test_folders(),
+            disabled=session_state.disabled,
+        )
 
         options = {
             "marks": None,
@@ -46,9 +52,15 @@ def run_type() -> dict:
         }
 
     elif run_option == RunType.File:
-        test_folder = st.selectbox(label="test folders", options=list_test_folders())
+        test_folder = st.selectbox(
+            label="test folders",
+            options=list_test_folders(),
+            disabled=session_state.disabled,
+        )
         test_file = st.selectbox(
-            label="test file", options=list_test_files(test_folder)
+            label="test file",
+            options=list_test_files(test_folder),
+            disabled=session_state.disabled,
         )
 
         options = {
@@ -59,11 +71,21 @@ def run_type() -> dict:
         }
 
     elif run_option == RunType.TestCase:
-        test_folder = st.selectbox(label="test folders", options=list_test_folders())
-        test_file = st.selectbox(
-            label="test file", options=list_test_files(test_folder)
+        test_folder = st.selectbox(
+            label="test folders",
+            options=list_test_folders(),
+            disabled=session_state.disabled,
         )
-        test_case = st.selectbox(label="test case", options=list_test_cases(test_file))
+        test_file = st.selectbox(
+            label="test file",
+            options=list_test_files(test_folder),
+            disabled=session_state.disabled,
+        )
+        test_case = st.selectbox(
+            label="test case",
+            options=list_test_cases(test_file),
+            disabled=session_state.disabled,
+        )
         formatted_test_case = f"{str(test_file)}::{str(test_case)}"
         options = {
             "marks": None,
