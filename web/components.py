@@ -1,7 +1,7 @@
 """Functions and streamlit components for use in the Streamlit frontend."""
 
 import subprocess
-from enum import StrEnum
+from enum import Enum
 
 import streamlit as st
 from streamlit.runtime.state import SessionStateProxy
@@ -10,7 +10,7 @@ from utils.list_paths import list_test_cases, list_test_files, list_test_folders
 from utils.load_markers import load_pytest_markers
 
 
-class RunType(StrEnum):
+class RunType(str, Enum):
     """Represent different run types for Playtest."""
 
     All = "All"
@@ -29,7 +29,7 @@ def run_type(session_state: SessionStateProxy) -> dict:
     )
 
     if run_option == RunType.Markers:
-        marks = markers()
+        marks = markers(session_state=session_state)
         options = {
             "marks": marks,
             "test_folder": None,
@@ -105,7 +105,7 @@ def run_type(session_state: SessionStateProxy) -> dict:
     return options
 
 
-def markers() -> list[str | None]:
+def markers(session_state: SessionStateProxy) -> list[str | None]:
     """Load pytest marks, display them in streamlit and return the selected markers."""
     # Parse markers from the pyproject.toml file
     all_marks = load_pytest_markers()
@@ -114,6 +114,7 @@ def markers() -> list[str | None]:
         label="Markers",
         options=all_marks,
         help="Select to run tests with the chosen markers",
+        disabled=session_state.disabled,
     )
     # Return the chosen markers
     return markers
