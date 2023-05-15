@@ -5,11 +5,11 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-import json
+import json  # noqa: E402
 
-import streamlit as st
+import streamlit as st  # noqa: E402
 
-from utils.list_paths import list_json_report_files
+from utils.list_paths import list_json_report_files  # noqa: E402
 
 
 def path_parent(path: Path) -> str:
@@ -34,7 +34,12 @@ def get_unique_tests(data: dict) -> tuple[str]:
     return tuple(set([x["nodeid"] for x in data]))
 
 
-st.title("Reports")
+st.set_page_config(
+    page_title="Reports",
+    page_icon="random",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
 
 # Select a json report, formatted to show only parent folder
 report_path = st.selectbox(
