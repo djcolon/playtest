@@ -1,5 +1,6 @@
 """Functions for gettings lists of files and directories."""
 
+import os
 import re
 from pathlib import Path
 
@@ -54,4 +55,4 @@ def list_json_report_files() -> list[Path]:
     files = dir.glob("*/*.json")
 
     # Return a list of the files
-    return [x for x in files if x.is_file()]
+    return sorted([x for x in files if x.is_file()], key=os.path.getmtime, reverse=True)
