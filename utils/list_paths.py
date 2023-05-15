@@ -43,3 +43,15 @@ def list_test_cases(file: Path) -> list[str]:
                 all_tests.append(regex_line.group())
 
     return all_tests
+
+
+def list_json_report_files() -> list[Path]:
+    """List json report files nested in the reports directory."""
+    # Define path to reports directory for all json files
+
+    dir = Path.cwd() / "reports"
+
+    files = dir.glob("*/*.json")
+
+    # Return a list of the files
+    return [x for x in files if x.is_file()]
