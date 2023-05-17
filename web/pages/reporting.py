@@ -42,6 +42,26 @@ def get_total_duration(data: dict) -> float:
     return duration
 
 
+def get_results_count(data: dict) -> int:
+    """Get the number of tests passed and failed from the json report."""
+    # Identify the test data object
+    test_data = data.get("test_data")
+
+    # Initialise counters
+    passed_count = 0
+    failed_count = 0
+
+    # Get number of passed outcomes and increment counter
+    for test in test_data:
+        if test["when"] == "call":
+            if test["outcome"] == "passed":
+                passed_count += 1
+            else:
+                failed_count += 1
+
+    return passed_count, failed_count
+
+
 def parse_test_results(data: dict, test_cases: tuple[str]) -> list[dict]:
     """Parse the json report for results to pass into a dataframe."""
     # Identify the test data object
@@ -87,52 +107,65 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Select a json report, formatted to show only parent folder
-report_path = st.selectbox(
-    label="reports",
-    options=list_json_report_files(),
-    format_func=path_parent,
-)
+st.title(body="Reports")
 
-st.write(f"Selected report: {report_path}")
+report_col1, report_col2 = st.columns(2)
 
-# Load json report into a dict
-data = load_json_report(file=report_path)
+# Select a date to filter selectable test reports
+with report_col1:
+    selected_date = st.date_input(label="Select a date").strftime("%d-%m-%Y")
 
-# Get the test data object from the report
-test_data = data.get("test_data")
-
-# Get all unique node ids from the test cases
-test_cases = get_unique_tests(test_data)
-
-st.subheader(body="Test Run Summary")
+with report_col2:
+    # Select a json report, formatted to show only parent folder
+    report_path = st.selectbox(
+        label="Available reports",
+        options=list_json_report_files(date=selected_date),
+        format_func=path_parent,
+    )
 
 
-info_col1, info_col2, info_col3, info_col4 = st.columns(4)
+view_report = st.button(label="View Report", type="primary")
 
+if report_path is not None and view_report:
+    st.write(f"Selected report: {report_path}")
 
-# Display the total test run duration
-with info_col1:
-    st.info(body=f"Total duration: {get_total_duration(data=data)}s", icon="⏰")
+    # Load json report into a dict
+    data = load_json_report(file=report_path)
 
-# Display total number of tests
-with info_col2:
-    st.info(body=f"Number of tests: {len(test_cases)}", icon="🧮")
+    # Get the test data object from the report
+    test_data = data.get("test_data")
 
-# Display number of tests passed
-with info_col3:
-    st.success(body="15", icon="✅")
+    # Get all unique node ids from the test cases
+    test_cases = get_unique_tests(test_data)
 
+    # Get count of passed and failed test results
+    passed_count, failed_count = get_results_count(data=data)
 
-# Display number of tests failed
-with info_col4:
-    st.error(body="15", icon="❌")
+    st.subheader(body="Test Run Summary")
 
+    info_col1, info_col2, info_col3, info_col4 = st.columns(4)
 
-st.dataframe(
-    data=parse_test_results(data=data, test_cases=test_cases), use_container_width=True
-)
+    # Display the total test run duration
+    with info_col1:
+        st.info(body=f"Total duration: {get_total_duration(data=data)}s", icon="⏰")
 
-# Display the raw json
-with st.expander(label="Raw json report data"):
-    st.json(data)
+    # Display total number of tests
+    with info_col2:
+        st.info(body=f"Number of tests: {len(test_cases)}", icon="🧮")
+
+    # Display number of tests passed
+    with info_col3:
+        st.success(body=f"Passed: {passed_count}", icon="✅")
+
+    # Display number of tests failed
+    with info_col4:
+        st.error(body=f"Failed: {failed_count}", icon="❌")
+
+    st.dataframe(
+        data=parse_test_results(data=data, test_cases=test_cases),
+        use_container_width=True,
+    )
+
+    # Display the raw json
+    with st.expander(label="Raw json report data"):
+        st.json(data)
