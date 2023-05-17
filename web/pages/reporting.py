@@ -100,6 +100,27 @@ def parse_test_results(data: dict, test_cases: tuple[str]) -> list[dict]:
     return results
 
 
+def display_test_failures(data: dict) -> None:
+    """Parse and display test failure information from json report."""
+    # Identify the test data object
+    test_data = data.get("test_data")
+
+    # Get failed test report objects
+    for test in test_data:
+        if test["when"] == "call" and test["outcome"] != "passed":
+            error_message = test["longrepr"]["reprtraceback"]["reprentries"][0]["data"][
+                "lines"
+            ]
+            error_message_str = "\n".join([str(line) for line in error_message])
+            with st.expander(label=f":red[{test['nodeid']}]"):
+                st.subheader("Path:")
+                st.text(test["longrepr"]["reprcrash"]["path"])
+                st.subheader("Line Number:")
+                st.text(test["longrepr"]["reprcrash"]["lineno"])
+                st.subheader("Error Message:")
+                st.text(error_message_str)
+
+
 st.set_page_config(
     page_title="Reports",
     page_icon="random",
@@ -169,3 +190,7 @@ if report_path is not None and view_report:
     # Display the raw json
     with st.expander(label="Raw json report data"):
         st.json(data)
+
+    st.subheader(body="Failed tests")
+
+    display_test_failures(data=data)
