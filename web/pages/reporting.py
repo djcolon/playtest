@@ -34,6 +34,52 @@ def get_unique_tests(data: dict) -> tuple[str]:
     return tuple(set([x["nodeid"] for x in data]))
 
 
+def get_total_duration(data: dict) -> float:
+    """Get total duration from json report."""
+    # Get total duration from the metadata object
+    metadata = data.get("metadata")
+    duration = metadata[1].get("total_duration")
+    return duration
+
+
+def parse_test_results(data: dict, test_cases: tuple[str]) -> list[dict]:
+    """Parse the json report for results to pass into a dataframe."""
+    # Identify the test data object
+    test_data = data.get("test_data")
+
+    # Initialise empty results list
+    results = []
+
+    # Get each object for each unique nodeid
+    for test in test_cases:
+        test_results = {"Test Case": test}
+        test_objects = [x for x in test_data if x["nodeid"] == test]
+        for test_object in test_objects:
+            if test_object["when"] == "call":
+                outcome = test_object["outcome"]
+                call_duration = test_object["duration"]
+            elif test_object["when"] == "setup":
+                setup_duration = test_object["duration"]
+
+            elif test_object["when"] == "teardown":
+                teardown_duration = test_object["duration"]
+
+        total_duration = call_duration + setup_duration + teardown_duration
+        test_results.update(
+            {
+                "Outcome": outcome,
+                "Setup Duration": round(setup_duration, 2),
+                "Call Duration": round(call_duration, 2),
+                "Teardown Duration": round(teardown_duration, 2),
+                "Total Duration": round(total_duration, 2),
+            }
+        )
+
+        results.append(test_results)
+
+    return results
+
+
 st.set_page_config(
     page_title="Reports",
     page_icon="random",
@@ -53,35 +99,40 @@ st.write(f"Selected report: {report_path}")
 # Load json report into a dict
 data = load_json_report(file=report_path)
 
-# Display the raw json
-with st.expander(label="Raw json report data"):
-    st.json(data)
-
-# Get total duration from the metadata object
-metadata = data.get("metadata")
-duration = metadata[1].get("total_duration")
-
-# Display the total test run duration
-st.info(body=f"Total duration: {duration}s", icon="⏰")
-
 # Get the test data object from the report
 test_data = data.get("test_data")
 
 # Get all unique node ids from the test cases
 test_cases = get_unique_tests(test_data)
 
-results = []
-for test in test_data:
-    if test["when"] == "call":
-        test_path = Path(test["nodeid"])
-        result_dict = {
-            "Test Case": test["nodeid"],
-            "Duration": test["duration"],
-            "Outcome": test["outcome"],
-            "Test Folder": Path(test["location"][0]).parent.stem,
-            "Test File": Path(test["location"][0]).name,
-        }
-        results.append(result_dict)
+st.subheader(body="Test Run Summary")
 
 
-st.dataframe(results)
+info_col1, info_col2, info_col3, info_col4 = st.columns(4)
+
+
+# Display the total test run duration
+with info_col1:
+    st.info(body=f"Total duration: {get_total_duration(data=data)}s", icon="⏰")
+
+# Display total number of tests
+with info_col2:
+    st.info(body=f"Number of tests: {len(test_cases)}", icon="🧮")
+
+# Display number of tests passed
+with info_col3:
+    st.success(body="15", icon="✅")
+
+
+# Display number of tests failed
+with info_col4:
+    st.error(body="15", icon="❌")
+
+
+st.dataframe(
+    data=parse_test_results(data=data, test_cases=test_cases), use_container_width=True
+)
+
+# Display the raw json
+with st.expander(label="Raw json report data"):
+    st.json(data)
