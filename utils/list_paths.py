@@ -46,7 +46,7 @@ def list_test_cases(file: Path) -> list[str]:
     return all_tests
 
 
-def list_json_report_files() -> list[Path]:
+def list_json_report_files(date: str) -> list[Path]:
     """List json report files nested in the reports directory."""
     # Define path to reports directory for all json files
 
@@ -55,4 +55,8 @@ def list_json_report_files() -> list[Path]:
     files = dir.glob("*/*.json")
 
     # Return a list of the files
-    return sorted([x for x in files if x.is_file()], key=os.path.getmtime, reverse=True)
+    return sorted(
+        [x for x in files if x.is_file() and date in str(x.parent)],
+        key=os.path.getmtime,
+        reverse=True,
+    )
