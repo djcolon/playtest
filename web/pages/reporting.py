@@ -7,6 +7,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import json  # noqa: E402
 
+import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 
 from utils.list_paths import list_json_report_files  # noqa: E402
@@ -121,22 +122,26 @@ def display_test_failures(data: dict) -> None:
                 st.text(error_message_str)
 
 
+def highlight_rows(row: pd.DataFrame) -> list[str]:
+    """Highlight rows in the test results dataframe."""
+    value = row.loc["Outcome"]
+    color = "#ff2b2b17" if value != "passed" else ""
+
+    return ["background-color: {}".format(color) for r in row]
+
+
 st.set_page_config(
     page_title="Reports",
     page_icon="random",
     layout="wide",
-    initial_sidebar_state="collapsed",
 )
 
 st.title(body="Reports")
 
-report_col1, report_col2 = st.columns(2)
-
-# Select a date to filter selectable test reports
-with report_col1:
+with st.sidebar:
+    # Select a date to filter selectable test reports
     selected_date = st.date_input(label="Select a date").strftime("%d-%m-%Y")
 
-with report_col2:
     # Select a json report, formatted to show only parent folder
     report_path = st.selectbox(
         label="Available reports",
@@ -144,8 +149,7 @@ with report_col2:
         format_func=path_parent,
     )
 
-
-view_report = st.button(label="View Report", type="primary")
+    view_report = st.button(label="View Report", type="primary")
 
 if report_path is not None and view_report:
     st.write(f"Selected report: {report_path}")
@@ -182,15 +186,20 @@ if report_path is not None and view_report:
     with info_col4:
         st.error(body=f"Failed: {failed_count}", icon="❌")
 
+    # Create a dataframe of the test results, with styling for failed tests
+    results_df = pd.DataFrame(data=parse_test_results(data=data, test_cases=test_cases))
+
+    # Display a streamlit dataframe widget
     st.dataframe(
-        data=parse_test_results(data=data, test_cases=test_cases),
-        use_container_width=True,
+        data=results_df.style.apply(highlight_rows, axis=1), use_container_width=True
     )
 
-    # Display the raw json
-    with st.expander(label="Raw json report data"):
-        st.json(data)
-
+    # Display expanders with data for each failed test
     st.subheader(body="Failed tests")
 
     display_test_failures(data=data)
+
+    # Display the raw json
+    st.subheader(body="Raw Data")
+    with st.expander(label="Raw json report data"):
+        st.json(data)
