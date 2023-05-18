@@ -64,7 +64,11 @@ class PlaytestReportPlugin:
     def pytest_sessionfinish(self, exitstatus: int) -> None:
         """Generate report at the end of the pytest session."""
         # Get the metadata for the report
-        data = {"pytest_version": pytest.__version__, "exitstatus": exitstatus}
+        data = {
+            "pytest_version": pytest.__version__,
+            "exitstatus": exitstatus,
+            "args": self._config.invocation_params.args,
+        }
         self._metadata.append(data)
 
         # Calculate total duration of test execution
