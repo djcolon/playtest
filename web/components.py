@@ -176,10 +176,18 @@ def run(cli_args: list) -> int:
                         "configfile",
                         "plugins",
                         "collecting",
+                        "- generated Playtest report file",
                     )
                 ):
-                    with expander_metadata:
-                        st.write(output)
+                    if any(
+                        substring in output
+                        for substring in ["FAILURES", "short test summary info"]
+                    ):
+                        with expander_failures:
+                            st.write(output)
+                    else:
+                        with expander_metadata:
+                            st.write(output)
                 elif (
                     output.startswith("tests")
                     and "PASSED" in output
@@ -194,6 +202,6 @@ def run(cli_args: list) -> int:
                         st.error(output)
                 else:
                     with expander_failures:
-                        st.write(output)
+                        st.text(output)
     return_code = process.poll()
     return return_code
