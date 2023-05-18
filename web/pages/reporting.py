@@ -9,6 +9,7 @@ import json  # noqa: E402
 
 import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
+from pandas.io.formats.style import Styler  # noqa: E402
 
 from utils.list_paths import list_json_report_files  # noqa: E402
 
@@ -89,10 +90,10 @@ def parse_test_results(data: dict, test_cases: tuple[str]) -> list[dict]:
         test_results.update(
             {
                 "Outcome": outcome,
-                "Setup Duration": round(setup_duration, 2),
-                "Call Duration": round(call_duration, 2),
-                "Teardown Duration": round(teardown_duration, 2),
-                "Total Duration": round(total_duration, 2),
+                "Setup Duration": setup_duration,
+                "Call Duration": call_duration,
+                "Teardown Duration": teardown_duration,
+                "Total Duration": total_duration,
             }
         )
 
@@ -128,6 +129,24 @@ def highlight_rows(row: pd.DataFrame) -> list[str]:
     color = "#ff2b2b17" if value != "passed" else ""
 
     return ["background-color: {}".format(color) for r in row]
+
+
+def style_report_dataframe(df: Styler) -> Styler:
+    """Style and format the report dataframe."""
+    # Apply conditional highlighting
+    df.apply(highlight_rows, axis=1)
+
+    # Format the floats to 2dp
+    df.format(
+        formatter={
+            "Setup Duration": "{:.2f}",
+            "Call Duration": "{:.2f}",
+            "Teardown Duration": "{:.2f}",
+            "Total Duration": "{:.2f}",
+        }
+    )
+
+    return df
 
 
 st.set_page_config(
@@ -189,9 +208,10 @@ if report_path is not None and view_report:
     # Create a dataframe of the test results, with styling for failed tests
     results_df = pd.DataFrame(data=parse_test_results(data=data, test_cases=test_cases))
 
-    # Display a streamlit dataframe widget
+    # Display a streamlit dataframe widget with styling applied
     st.dataframe(
-        data=results_df.style.apply(highlight_rows, axis=1), use_container_width=True
+        data=results_df.style.pipe(style_report_dataframe),
+        use_container_width=True,
     )
 
     # Display expanders with data for each failed test
