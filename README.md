@@ -10,33 +10,6 @@ Playtest is a test automation solution for web testing using Playwright and Pyte
 - Easy configuration
 
 
-## Usage
-
-Run all tests
-```bash
-python -m pytest
-```
-
-Run tests with a given mark e.g. smoke
-```bash
-python -m pytest -m smoke
-```
-
-Run with verbose terminal output
-```bash
-python -m pytest -v
-```
-
-Run with the playtest report plugin to generate a json report
-```bash
-python -m pytest --playtest-report
-```
-
-Run tests in parallel with `pytest-xdist`
-```bash
-python -m pytest --numprocesses auto
-```
-
 ## Docker usage
 
 Start container
@@ -49,9 +22,12 @@ Run the container
 docker start playtest -a
 ```
 
+> **⚠ WARNING:** Running headed inside Docker fails currently as it needs xvfb-run command which is not yet implemented. 
+
+
 ## Streamlit usage
 
-Run streamlit app for an interactive web ui
+Run streamlit app locally for an interactive web ui
 ```bash
 streamlit run web/app.py
 ```
@@ -65,4 +41,9 @@ playtest-report: False
 marks:
   - smoke
   - regression
+test_dir: null
+test_file: null
+test_case: null
+rerun: 2
+tracing: True
 ```
