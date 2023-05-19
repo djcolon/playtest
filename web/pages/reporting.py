@@ -149,6 +149,47 @@ def style_report_dataframe(df: Styler) -> Styler:
     return df
 
 
+def display_test_summary(data: dict) -> None:
+    """Parse the json report and display a test summary."""
+    # Get the list of pytest cli args from the json report
+    metadata = data.get("metadata")
+    metadata_args = metadata[0]["args"]
+
+    # filter through headed option as it affects list indices
+    if "--headed" in metadata_args:
+        headed = "✅"
+        run_type_arg: str = metadata_args[2]
+
+    else:
+        headed = "❌"
+        run_type_arg: str = metadata_args[1]
+
+    # Check the format of the string that contains how the tests were run
+    if "/" in run_type_arg and ".py" not in run_type_arg:
+        run_type = f"By test folder - {run_type_arg}"
+    elif run_type_arg.endswith(".py"):
+        run_type = f"By test file - {run_type_arg}"
+    elif "::" in run_type_arg:
+        run_type = f"By test case - {run_type_arg}"
+    elif "--headed" in metadata_args and metadata[0]["args"][3] == "-m":
+        run_type = f"By markers - {metadata[0]['args'][4]}"
+
+    elif metadata[0]["args"][2] == "-m":
+        run_type = f"By markers - {metadata[0]['args'][3]}"
+    else:
+        run_type = "All Tests"
+
+    parallel = "✅" if "numprocesses" in metadata_args else "❌"
+
+    tracing = "✅" if "tracing" in metadata_args else "❌"
+
+    st.write(f"- Run Type: {run_type}")
+    st.write(f"- Parallel: {parallel}")
+    st.write(f"- Tracing: {tracing}")
+    st.write(f"- Headed: {headed}")
+    st.write(f"- Test Report: {report_path}")
+
+
 st.set_page_config(
     page_title="Reports",
     page_icon="random",
@@ -191,29 +232,7 @@ if report_path is not None and view_report:
         st.subheader(body="Test Run Summary")
 
         # Display how the tests were run i.e. by folder, file, test case, markers
-        metadata = data.get("metadata")
-        run_type_arg: str = metadata[0]["args"][1]
-
-        if "/" in run_type_arg and ".py" not in run_type_arg:  # folder: tests/demo
-            run_type = f"By test folder - {run_type_arg}"
-        elif run_type_arg.endswith(".py"):  # file: tests/demo/test_demo.py
-            run_type = f"By test file - {run_type_arg}"
-        elif (
-            "::" in run_type_arg
-        ):  # test: tests/demo/test_demo.py::test_bmi_metric_centimetres
-            run_type = f"By test case - {run_type_arg}"
-        elif (
-            metadata[0]["args"][2] == "-m"
-        ):  # multiple marks: "-m" "smoke or regression"
-            run_type = f"By markers - {metadata[0]['args'][3]}"
-        else:
-            run_type = "All Tests"
-
-        st.write(f"- Run Type: {run_type}")
-        st.write("- Parallel: Yes")
-        st.write("- Tracing: No")
-        st.write("- Headed: No")
-        st.write(f"- Test Report: {report_path}")
+        display_test_summary(data=data)
 
     with report_tab:
         st.subheader(body="Test Run Report")
