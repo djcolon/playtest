@@ -189,23 +189,22 @@ def run(cli_args: list) -> int:
                     else:
                         with expander_metadata:
                             st.write(output)
-                elif (
-                    output.startswith("tests")
-                    and "PASSED" in output
-                    or output.startswith("[g")
-                    and "PASSED" in output
-                ):
+
+                elif output.startswith(("tests", "[g")) and "PASSED" in output:
                     with expander_results:
                         st.success(output)
 
-                elif output.startswith("tests") and "FAILED" in output:
+                elif output.startswith(("tests", "[g")) and "FAILED" in output:
                     with expander_results:
                         st.error(output)
-                elif output.startswith("tests") and "RERUN" in output:
+
+                elif output.startswith(("tests", "[g")) and "RERUN" in output:
                     with expander_results:
                         st.warning(output)
+
                 else:
                     with expander_failures:
                         st.text(output)
+
     return_code = process.poll()
     return return_code
