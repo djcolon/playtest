@@ -61,6 +61,15 @@ if __name__ == "__main__":
                 disabled=st.session_state.disabled,
             )
 
+            # Rerun failed tests x times
+            rerun = st.number_input(
+                label="Reruns",
+                min_value=0,
+                max_value=3,
+                help="Select number of times to rerun failed tests",
+                disabled=st.session_state.disabled,
+            )
+
         # Select type of test run and associated options
         run_options = run_type(session_state=st.session_state)
 
@@ -87,6 +96,7 @@ if __name__ == "__main__":
             test_file=run_options["test_file"],
             test_case=run_options["test_case"],
             tracing=tracing,
+            rerun=rerun,
         )
 
         now = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")

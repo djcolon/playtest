@@ -52,16 +52,19 @@ def get_results_count(data: dict) -> int:
     # Initialise counters
     passed_count = 0
     failed_count = 0
+    rerun_count = 0
 
     # Get number of passed outcomes and increment counter
     for test in test_data:
         if test["when"] == "call":
             if test["outcome"] == "passed":
                 passed_count += 1
-            else:
+            elif test["outcome"] == "failed":
                 failed_count += 1
+            elif test["outcome"] == "rerun":
+                rerun_count += 1
 
-    return passed_count, failed_count
+    return passed_count, failed_count, rerun_count
 
 
 def parse_test_results(data: dict, test_cases: tuple[str]) -> list[dict]:
@@ -152,8 +155,8 @@ def style_report_dataframe(df: Styler) -> Styler:
 def display_test_summary(data: dict) -> None:
     """Parse the json report and display a test summary."""
     # Get the list of pytest cli args from the json report
-    metadata = data.get("metadata")
-    metadata_args = metadata[0]["args"]
+    metadata: dict = data.get("metadata")
+    metadata_args: list = metadata[0]["args"]
 
     # filter through headed option as it affects list indices
     if "--headed" in metadata_args:
@@ -183,10 +186,20 @@ def display_test_summary(data: dict) -> None:
 
     tracing = "✅" if "tracing" in metadata_args else "❌"
 
+    rerun = "✅" if "--reruns" in metadata_args else "❌"
+
+    # Get number set for the rerun argument
+    if "--reruns" in metadata_args:
+        rerun_arg_index = metadata_args.index("--reruns")
+        rerun_config_arg = metadata_args[(rerun_arg_index + 1)]
+    else:
+        rerun_config_arg = "❌"
+
     st.write(f"- Run Type: {run_type}")
     st.write(f"- Parallel: {parallel}")
     st.write(f"- Tracing: {tracing}")
     st.write(f"- Headed: {headed}")
+    st.write(f"- Reruns: {rerun} Setting: {rerun_config_arg}")
     st.write(f"- Test Report: {report_path}")
 
 
@@ -221,8 +234,8 @@ if report_path is not None and view_report:
     # Get all unique node ids from the test cases
     test_cases = get_unique_tests(test_data)
 
-    # Get count of passed and failed test results
-    passed_count, failed_count = get_results_count(data=data)
+    # Get count of passed, failed and rerun test results
+    passed_count, failed_count, rerun_count = get_results_count(data=data)
 
     # Tabs for separating test run information
     summary_tab, report_tab, raw_data_tab = st.tabs(["Summary", "Report", "Raw Output"])
@@ -237,7 +250,9 @@ if report_path is not None and view_report:
     with report_tab:
         st.subheader(body="Test Run Report")
 
-        info_col1, info_col2, info_col3, info_col4 = st.columns(4)
+        info_col1, info_col2, info_col3, info_col4, info_col5 = st.columns(
+            [3, 3, 2, 2, 2]
+        )
 
         # Display the total test run duration
         with info_col1:
@@ -254,6 +269,10 @@ if report_path is not None and view_report:
         # Display number of tests failed
         with info_col4:
             st.error(body=f"Failed: {failed_count}", icon="❌")
+
+        # Display number rerun tests
+        with info_col5:
+            st.warning(body=f"Rerun: {rerun_count}", icon="🏃‍♂️")
 
         # Create a dataframe of the test results, with styling for failed tests
         results_df = pd.DataFrame(

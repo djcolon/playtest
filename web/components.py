@@ -129,6 +129,7 @@ def run_config(
     test_file: str = None,
     test_case: str = None,
     tracing: bool = False,
+    rerun: int = 0,
 ) -> dict:
     """Generate Playtest config to pass to the run command."""
     config = {
@@ -140,7 +141,7 @@ def run_config(
         "test_dir": test_dir,
         "test_file": test_file,
         "test_case": test_case,
-        "rerun": 0,
+        "rerun": rerun,
         "tracing": tracing,
     }
     return config
@@ -200,6 +201,9 @@ def run(cli_args: list) -> int:
                 elif output.startswith("tests") and "FAILED" in output:
                     with expander_results:
                         st.error(output)
+                elif output.startswith("tests") and "RERUN" in output:
+                    with expander_results:
+                        st.warning(output)
                 else:
                     with expander_failures:
                         st.text(output)
