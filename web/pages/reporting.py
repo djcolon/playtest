@@ -182,9 +182,9 @@ def display_test_summary(data: dict) -> None:
     else:
         run_type = "All Tests"
 
-    parallel = "✅" if "numprocesses" in metadata_args else "❌"
+    parallel = "✅" if "--numprocesses" in metadata_args else "❌"
 
-    tracing = "✅" if "tracing" in metadata_args else "❌"
+    tracing = "✅" if "--tracing" in metadata_args else "❌"
 
     rerun = "✅" if "--reruns" in metadata_args else "❌"
 
