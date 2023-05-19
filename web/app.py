@@ -61,8 +61,6 @@ if __name__ == "__main__":
                 disabled=st.session_state.disabled,
             )
 
-        st.divider()
-
         # Select type of test run and associated options
         run_options = run_type(session_state=st.session_state)
 
