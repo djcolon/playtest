@@ -171,8 +171,6 @@ with st.sidebar:
     view_report = st.button(label="View Report", type="primary")
 
 if report_path is not None and view_report:
-    st.write(f"Selected report: {report_path}")
-
     # Load json report into a dict
     data = load_json_report(file=report_path)
 
@@ -185,41 +183,75 @@ if report_path is not None and view_report:
     # Get count of passed and failed test results
     passed_count, failed_count = get_results_count(data=data)
 
-    st.subheader(body="Test Run Summary")
+    # Tabs for separating test run information
+    summary_tab, report_tab, raw_data_tab = st.tabs(["Summary", "Report", "Raw Output"])
 
-    info_col1, info_col2, info_col3, info_col4 = st.columns(4)
+    with summary_tab:
+        # Display test run summary
+        st.subheader(body="Test Run Summary")
 
-    # Display the total test run duration
-    with info_col1:
-        st.info(body=f"Total duration: {get_total_duration(data=data)}s", icon="⏰")
+        # Display how the tests were run i.e. by folder, file, test case, markers
+        metadata = data.get("metadata")
+        run_type_arg: str = metadata[0]["args"][1]
 
-    # Display total number of tests
-    with info_col2:
-        st.info(body=f"Number of tests: {len(test_cases)}", icon="🧮")
+        if "/" in run_type_arg and ".py" not in run_type_arg:  # folder: tests/demo
+            run_type = f"By test folder - {run_type_arg}"
+        elif run_type_arg.endswith(".py"):  # file: tests/demo/test_demo.py
+            run_type = f"By test file - {run_type_arg}"
+        elif (
+            "::" in run_type_arg
+        ):  # test: tests/demo/test_demo.py::test_bmi_metric_centimetres
+            run_type = f"By test case - {run_type_arg}"
+        elif (
+            metadata[0]["args"][2] == "-m"
+        ):  # multiple marks: "-m" "smoke or regression"
+            run_type = f"By markers - {metadata[0]['args'][3]}"
+        else:
+            run_type = "All Tests"
 
-    # Display number of tests passed
-    with info_col3:
-        st.success(body=f"Passed: {passed_count}", icon="✅")
+        st.write(f"- Run Type: {run_type}")
+        st.write("- Parallel: Yes")
+        st.write("- Tracing: No")
+        st.write("- Headed: No")
+        st.write(f"- Test Report: {report_path}")
 
-    # Display number of tests failed
-    with info_col4:
-        st.error(body=f"Failed: {failed_count}", icon="❌")
+    with report_tab:
+        st.subheader(body="Test Run Report")
 
-    # Create a dataframe of the test results, with styling for failed tests
-    results_df = pd.DataFrame(data=parse_test_results(data=data, test_cases=test_cases))
+        info_col1, info_col2, info_col3, info_col4 = st.columns(4)
 
-    # Display a streamlit dataframe widget with styling applied
-    st.dataframe(
-        data=results_df.style.pipe(style_report_dataframe),
-        use_container_width=True,
-    )
+        # Display the total test run duration
+        with info_col1:
+            st.info(body=f"Total duration: {get_total_duration(data=data)}s", icon="⏰")
 
-    # Display expanders with data for each failed test
-    st.subheader(body="Failed tests")
+        # Display total number of tests
+        with info_col2:
+            st.info(body=f"Number of tests: {len(test_cases)}", icon="🧮")
 
-    display_test_failures(data=data)
+        # Display number of tests passed
+        with info_col3:
+            st.success(body=f"Passed: {passed_count}", icon="✅")
 
-    # Display the raw json
-    st.subheader(body="Raw Data")
-    with st.expander(label="Raw json report data"):
+        # Display number of tests failed
+        with info_col4:
+            st.error(body=f"Failed: {failed_count}", icon="❌")
+
+        # Create a dataframe of the test results, with styling for failed tests
+        results_df = pd.DataFrame(
+            data=parse_test_results(data=data, test_cases=test_cases)
+        )
+
+        # Display a streamlit dataframe widget with styling applied
+        st.dataframe(
+            data=results_df.style.pipe(style_report_dataframe),
+            use_container_width=True,
+        )
+
+        # Display expanders with data for each failed test
+        st.subheader(body="Failed tests")
+
+        display_test_failures(data=data)
+
+    with raw_data_tab:
+        # Display the raw json
         st.json(data)
